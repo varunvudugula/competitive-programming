@@ -2,31 +2,19 @@
 using namespace std;
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
     int t;
+    long long m,n;
     cin>>t;
-    long long n,inp,sum;
-   vector<long long> v;
     while(t--)
     {
-        cin>>n;
-        
-        for(int i=0;i<n;i++)
+        cin>>m>>n;
+        if((m+n)%3==0)
         {
-            cin>>inp;
-            v.push_back(inp);
+            cout<<"YES\n";
         }
-        sum=v.size();
-        for(int i=0;i<v.size()-1;i++)
-        {
-            if(v[i]<v[i+1])
-            {
-                sum+=1;
-            }
+        else{
+            cout<<"NO\n";
         }
-        cout<<sum<<"\n";
-        v.clear();
     }
     return 0;
 }

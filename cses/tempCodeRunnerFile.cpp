@@ -22,7 +22,7 @@ int main()
                 if(s[i]=='1')
                 as+=1;
             }
-            if(abs(as-bs)>(2*n-(i+1))/2)
+            if((i+1)%2==0&&abs(as-bs)>(2*n-(i+1))/2)
             {
                 res=1;
                 cout<<i+1<<"\n";
