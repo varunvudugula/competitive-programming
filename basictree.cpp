@@ -10,6 +10,144 @@ struct Node{
         left=right=NULL;
     }
 };
+
+//boundary traversal
+bool isLeaf(Node *root)
+{
+    if(root->left==NULL&&root->right==NULL)
+    return true;
+    else 
+    return false;
+}
+void addLeftBoundary(Node* root,vector<int> &res)
+{
+    Node *cur=root->left;
+    while(cur){
+        if(!isLeaf(cur))
+            res.push_back(cur->data);
+        if(cur->left)
+            cur=cur->left;
+        else
+            cur=cur->right;
+    }
+}
+void addRightBoundary(Node *root,vector<int> &res)
+{
+    Node *cur=root->right;
+    vector<int> temp;
+    while(cur){
+        if(!isLeaf(cur))
+            temp.push_back(cur->data);
+        if(cur->left)
+            cur=cur->right;
+        else
+            cur=cur->left;
+
+    }
+    for(int i=temp.size()-1;i>=0;--i)
+    {
+        res.push_back(temp[i]);
+    }
+}
+void addleaves(Node *root,vector<int> &res)
+{
+    if(isLeaf(root)){
+        res.push_back(root->data);
+        return;
+    }
+    if(root->left)
+        addleaves(root->left,res);
+    if(root->right)
+        addleaves(root->right,res);
+}
+vector<int> printBoundary(Node* root)
+{
+    vector<int> res;
+    if(!root)
+        return res;
+    if(!isLeaf(root))
+        res.push_back(root->data);
+    addLeftBoundary(root,res);
+    addleaves(root,res);
+    addRightBoundary(root,res);
+    return res;
+}
+
+vector<vector<int>> zigzaglevel(Node* root)
+{
+    vector<vector<int>> res;
+    if(root==NULL)
+        return res;
+    queue<Node*> nodeq;
+    nodeq.push(root); 
+    bool itor=true;
+    while(!nodeq.empty())
+    {
+        int size=nodeq.size();
+        vector<int> row(size);
+        for(int i=0;i<size;i++)
+        {
+            Node *n=nodeq.front();
+            nodeq.pop();
+            int index=(itor)?i:(size-1-i);
+            row[index]=n->data;
+            if(n->left)
+            nodeq.push(n->left);
+            if(n->right)
+            nodeq.push(n->right);
+
+        }
+        itor=!itor;
+        res.push_back(row);
+    }
+    return res;
+
+}
+bool isSametree(Node* p,Node *q)
+{
+    if(p==NULL||q==NULL)
+    return (p==q);
+    return (p->data==q->data)&&isSametree(p->left,q->left)&&isSametree(p->right,q->right);
+}
+int height(Node* root,int &diameter)
+    {
+        if(root==NULL)
+            return 0;
+        int lh=height(root->left,diameter);
+        int rh=height(root->right,diameter);
+        diameter=max(diameter,lh+rh);
+        return max(lh,rh)+1;
+    }
+    int diameterOfBinaryTree(Node* root) {
+        int diameter=0;
+        height(root,diameter);
+        return diameter;
+    }
+int check(Node *root)
+{
+    if(root==NULL)
+    return 0;
+    int lh=check(root->left);
+    if(lh==-1)
+    return -1;
+    int rh=check(root->right);
+    if(rh==-1)
+    {
+        return -1;
+    }
+    if(abs(lh-rh)>1)
+    return -1;
+    return max(lh,rh)+1;
+}
+bool isbalanced(Node *root)
+{
+    int res=check(root);
+    if(res==-1)
+    {
+        return false;
+    }
+    return true;
+}
 void inprepost(Node *root)
 {
     stack<pair<Node*,int>> st;
@@ -127,6 +265,24 @@ bool isSymmetric(struct Node* root)
 {
 	// Code here
 	return helper(root,root);
+}
+
+int maxPathDown(struct Node* root,int maxi)
+{
+    if(root==NULL)
+    {
+        return 0;
+    }
+    int left=max(0,maxPathDown(root->left,maxi));
+    int right=max(0,maxPathDown(root->right,maxi));
+    maxi=max(maxi,left+right+root->data);
+    return max(left,right)+root->data;
+}
+int maxPath(struct Node* root)
+{
+    int maxi=INT_MIN;
+    maxPathDown(root,maxi);
+    return maxi;
 }
 vector<vector<int>> levelorder(struct Node *root)
 {
@@ -291,6 +447,7 @@ int main()
      cout<<"\n";
  }*/
  //mirror(root);
+ /*
  cout<<height(root)<<" height\n";
  cout<<diameter(root)<<" diameter\n";
  inprepost(root);
@@ -313,6 +470,20 @@ int main()
          cout<<ans[i][j]<<" ";
      }
      cout<<"\n";
- }
+ }*/
+/* cout<<isbalanced(root);
+     return 0;*/
+    /* vector<vector<int>> res=zigzaglevel(root);
+     for(int i=0;i<res.size();i++)
+     {
+         for(int j=0;j<res[i].size();j++)
+         {
+             cout<<res[i][j]<<" ";
+         }
+         cout<<"\n";
+     }*/
+     vector<int> v=printBoundary(root);
+     for(int i=0;i<v.size();i++)
+     cout<<v[i]<<" ";
      return 0;
 }
